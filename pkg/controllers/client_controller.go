@@ -20,6 +20,7 @@ func NewClientContorller(app *fiber.App, clientService *service.ClientService) *
 	app.Get("/client/all", clientController.GetAllClient)
 	app.Get("/client/:id", clientController.GetClientById)
 	app.Post("/client/add", clientController.CreateNewClient)
+	app.Post("/client/login", clientController.ClientLogin)
 
 	return clientController
 }
@@ -59,4 +60,21 @@ func (cc *ClientController) CreateNewClient(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(createdClient)
+}
+
+func (cc *ClientController) ClientLogin(c *fiber.Ctx) error {
+	var LoginData struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	if err := c.BodyParser(&LoginData); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	token, err := cc.clientService.ClientLogin(LoginData.Email, LoginData.Password)
+	if err != nil {
+		return c.Status(401).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"token": token})
 }

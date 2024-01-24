@@ -26,3 +26,7 @@ func (cs *ClientService) GetAllClient() ([]*models.Client, error) {
 func (cs *ClientService) CreateNewClient(newClient *models.Client) (*models.Client, error) {
 	return cs.clientRepository.CreateNewClient(newClient)
 }
+
+func (cs *ClientService) ClientLogin(email string, password string) (*models.Tokens, error) {
+	return cs.clientRepository.ClientLogin(email, password)
+}
