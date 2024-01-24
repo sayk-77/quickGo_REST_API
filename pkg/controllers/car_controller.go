@@ -5,6 +5,7 @@ import (
 
 	"example.com/go/models"
 	servise "example.com/go/pkg/service"
+	"example.com/go/tools"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,9 +18,9 @@ func NewCarController(app *fiber.App, carService *servise.CarService) *CarContro
 		carService: carService,
 	}
 
-	app.Get("/car/all", carController.GetAllCar)
-	app.Get("/car/:id", carController.GetCarById)
-	app.Post("/car/add", carController.CreateNewCar)
+	app.Get("/car/all", tools.AuthCheck, carController.GetAllCar)
+	app.Get("/car/:id", tools.AuthCheck, carController.GetCarById)
+	app.Post("/car/add", tools.AuthCheck, carController.CreateNewCar)
 
 	return carController
 }
