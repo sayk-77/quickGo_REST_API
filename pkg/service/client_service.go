@@ -30,3 +30,11 @@ func (cs *ClientService) CreateNewClient(newClient *models.Client) (*models.Clie
 func (cs *ClientService) ClientLogin(email string, password string) (string, error) {
 	return cs.clientRepository.ClientLogin(email, password)
 }
+
+func (cs *ClientService) ClientUpdateData(updateClientData models.ClientResponse) error {
+	return cs.clientRepository.ClientUpdateData(updateClientData)
+}
+
+func (cs *ClientService) ClientChangePassword(currentPassword string, newPassword string, id int) error {
+	return cs.clientRepository.ClientChangePassword(currentPassword, newPassword, id)
+}

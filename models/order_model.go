@@ -10,4 +10,5 @@ type Order struct {
 	OrderDate   string    `json:"orderDate"`
 	Client      Client    `gorm:"foreignKey:ClientID"`
 	CargoType   CargoType `gorm:"foreignKey:CargoTypeID"`
+	OrderPrice  int       `json:"orderPrice"`
 }
