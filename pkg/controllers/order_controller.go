@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"example.com/go/tools"
 	"strconv"
 
 	"example.com/go/models"
@@ -19,6 +20,7 @@ func NewOrderController(app *fiber.App, orderService *service.OrderService) *Ord
 
 	app.Get("/order/all", orderController.GetAllOrder)
 	app.Get("/order/:id", orderController.GetOrderById)
+	app.Post("/order/status", orderController.GetOrdersByStatus)
 	app.Post("/order/add", orderController.CreateNewOrder)
 
 	return orderController
@@ -59,4 +61,26 @@ func (oc *OrderController) CreateNewOrder(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(createdOrder)
+}
+
+func (oc *OrderController) GetOrdersByStatus(c *fiber.Ctx) error {
+	var token string = c.Get("Authorization")
+	clientId, err := tools.Decoder(token)
+	if err != nil {
+		return err
+	}
+
+	var orderStatus struct {
+		Status string `json:"status"`
+	}
+	if err := c.BodyParser(&orderStatus); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	orders, err := oc.orderService.GetOrdersByStatus(clientId, orderStatus.Status)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(orders)
 }

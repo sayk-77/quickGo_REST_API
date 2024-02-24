@@ -8,29 +8,26 @@ import (
 
 type CustomClaims struct {
 	jwt.StandardClaims
+	ClientId int `json:"id"`
 }
 
-func Decoder(tokenString string) (map[string]interface{}, error) {
+func Decoder(tokenString string) (int, error) {
 	if tokenString == "" {
-		return nil, fmt.Errorf("Token is missing")
+		return 0, fmt.Errorf("Token is missing")
 	}
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("ACCESS_TOKEN_SECRET_KEY")), nil
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Invalid Token")
+		return 0, fmt.Errorf("Invalid Token")
 	}
 
-	if !token.Valid {
-		return nil, fmt.Errorf("Invalid token")
+	claims, ok := token.Claims.(*CustomClaims)
+	if !ok || !token.Valid {
+		return 0, fmt.Errorf("Invalid token")
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("Invalid data in the token")
-	}
-
-	return claims, nil
+	return claims.ClientId, nil
 }

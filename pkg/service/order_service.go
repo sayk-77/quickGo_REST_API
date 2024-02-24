@@ -26,3 +26,7 @@ func (os *OrderService) GetAllOrder() ([]*models.Order, error) {
 func (os *OrderService) CreateNewOrder(newOrder *models.Order) (*models.Order, error) {
 	return os.orderRepository.CreateNewOrder(newOrder)
 }
+
+func (os *OrderService) GetOrdersByStatus(clientId int, status string) ([]*models.Order, error) {
+	return os.orderRepository.GetOrdersByStatus(clientId, status)
+}

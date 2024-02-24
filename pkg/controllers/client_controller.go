@@ -31,12 +31,10 @@ func (cc *ClientController) GetClientById(c *fiber.Ctx) error {
 
 	var token string = c.Get("Authorization")
 
-	decodeToken, err := tools.Decoder(token)
+	clientId, err := tools.Decoder(token)
 	if err != nil {
 		return err
 	}
-
-	clientId := int(decodeToken["id"].(float64))
 
 	client, err := cc.clientService.GetClientById(clientId)
 	if err != nil {
@@ -115,12 +113,10 @@ func (cc *ClientController) ClientChangePassword(c *fiber.Ctx) error {
 	}
 
 	var token string = c.Get("Authorization")
-	decodeToken, err := tools.Decoder(token)
+	clientId, err := tools.Decoder(token)
 	if err != nil {
 		return err
 	}
-
-	clientId := int(decodeToken["id"].(float64))
 
 	if err := c.BodyParser(&clientData); err != nil {
 		return fmt.Errorf("Не верные данные")
