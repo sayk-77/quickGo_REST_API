@@ -30,3 +30,7 @@ func (os *OrderService) CreateNewOrder(newOrder *models.Order) (*models.Order, e
 func (os *OrderService) GetOrdersByStatus(clientId int, status string) ([]*models.Order, error) {
 	return os.orderRepository.GetOrdersByStatus(clientId, status)
 }
+
+func (os *OrderService) DeleteOrderById(orderId int) error {
+	return os.orderRepository.DeleteOrderById(orderId)
+}

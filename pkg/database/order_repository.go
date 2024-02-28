@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"example.com/go/models"
 	"gorm.io/gorm"
 )
@@ -10,6 +11,7 @@ type OrderRepository interface {
 	GetAllOrder() ([]*models.Order, error)
 	CreateNewOrder(newOrder *models.Order) (*models.Order, error)
 	GetOrdersByStatus(clientId int, status string) ([]*models.Order, error)
+	DeleteOrderById(orderId int) error
 }
 
 type OrderRepositoryImpl struct {
@@ -60,4 +62,19 @@ func (or *OrderRepositoryImpl) GetOrdersByStatus(clientId int, status string) ([
 	}
 
 	return ordersRecord, nil
+}
+
+func (or *OrderRepositoryImpl) DeleteOrderById(orderId int) error {
+	condition := or.db.Where("id = ?", orderId)
+
+	result := condition.Unscoped().Delete(&models.Order{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("Запись не найдена")
+	}
+
+	return nil
 }

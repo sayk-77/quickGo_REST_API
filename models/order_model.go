@@ -4,12 +4,14 @@ import "gorm.io/gorm"
 
 type Order struct {
 	gorm.Model
-	ClientID     uint      `json:"clientId"`
-	CargoTypeID  uint      `json:"cargoTypeId"`
-	Status       string    `json:"status"`
-	OrderDate    string    `json:"orderDate"`
-	DeliveryDate string    `json:"deliveryDate"`
-	Client       Client    `gorm:"foreignKey:ClientID"`
-	CargoType    CargoType `gorm:"foreignKey:CargoTypeID"`
-	OrderPrice   int       `json:"orderPrice"`
+	ClientID           uint      `json:"clientId"`
+	CargoTypeID        uint      `json:"cargoTypeId"`
+	Status             string    `json:"status"`
+	OrderDate          string    `json:"orderDate"`
+	DestinationAddress string    `json:"destinationAddress"`
+	SendingAddress     string    `json:"sendingAddress"`
+	DeliveryDate       string    `json:"deliveryDate"`
+	OrderPrice         int       `json:"orderPrice"`
+	Client             Client    `gorm:"foreignKey:ClientID"`
+	CargoType          CargoType `gorm:"foreignKey:CargoTypeID"`
 }
