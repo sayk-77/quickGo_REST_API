@@ -6,7 +6,7 @@ import (
 )
 
 func AutoMigrate(db *gorm.DB) {
-	db.AutoMigrate(
+	err := db.AutoMigrate(
 		&models.Car{},
 		&models.CargoType{},
 		&models.Client{},
@@ -14,5 +14,9 @@ func AutoMigrate(db *gorm.DB) {
 		&models.Order{},
 		&models.TransportationContract{},
 		&models.WayBill{},
+		&models.Feedback{},
 	)
+	if err != nil {
+		return
+	}
 }

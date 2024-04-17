@@ -18,6 +18,8 @@ type ClientRepository interface {
 	ClientLogin(email string, password string) (string, error)
 	ClientUpdateData(updateClientData models.ClientResponse) error
 	ClientChangePassword(currentPassword string, newPassword string, id int) error
+	ClientFindByEmail(email string) error
+	ClientPasswordRecovery(email string, password string) error
 }
 
 type ClientRepositoryImpl struct {
@@ -127,6 +129,32 @@ func (cr *ClientRepositoryImpl) ClientChangePassword(currentPassword string, new
 	client.Password = string(hashedNewPassword)
 	if err := cr.db.Save(&client).Error; err != nil {
 		return fmt.Errorf("Ошибка при сохранении пароля")
+	}
+
+	return nil
+}
+
+func (cr *ClientRepositoryImpl) ClientFindByEmail(email string) error {
+	var client models.Client
+
+	if err := cr.db.Where("email = ?", email).First(&client).Error; err != nil {
+		return fmt.Errorf("Пользователь не найден")
+	}
+
+	return nil
+}
+
+func (cr *ClientRepositoryImpl) ClientPasswordRecovery(email string, password string) error {
+	var client models.Client
+
+	if err := cr.db.Where("email = ?", email).First(&client).Error; err != nil {
+		return fmt.Errorf("Не найден")
+	}
+
+	client.Password = password
+
+	if err := cr.db.Save(&client).Error; err != nil {
+		return fmt.Errorf("Ошибка при изменении пароля")
 	}
 
 	return nil

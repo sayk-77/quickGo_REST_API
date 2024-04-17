@@ -6,10 +6,11 @@ import (
 	"example.com/go/pkg/service"
 	servise "example.com/go/pkg/service"
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
-func SettingDepInjection(app *fiber.App, db *gorm.DB) {
+func SettingDepInjection(app *fiber.App, db *gorm.DB, redis *redis.Client) {
 	carRepository := database.NewCarRepository(db)
 	carService := servise.NewCarService(carRepository)
 	controllers.NewCarController(app, carService)
@@ -37,4 +38,14 @@ func SettingDepInjection(app *fiber.App, db *gorm.DB) {
 	waybillRepository := database.NewWaybillRepository(db)
 	waybillService := service.NewWaybillService(waybillRepository)
 	controllers.NewWaybillController(app, waybillService)
+
+	feedbackRepository := database.NewFeedbackRepository(db)
+	feedbackService := service.NewFeedbackService(feedbackRepository)
+	controllers.NewFeedbackController(app, feedbackService)
+
+	emailService := service.NewEmailService("smtp.gmail.com", "587", "yawaihv2@gmail.com", "bdkp ntae lrro bswq")
+	controllers.NewEmailController(app, emailService)
+
+	passwordRecoveryService := service.NewPasswordRecoveryService(redis, db)
+	controllers.NewPasswordRecoveryController(app, passwordRecoveryService)
 }

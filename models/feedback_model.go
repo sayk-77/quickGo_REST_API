@@ -8,4 +8,5 @@ type Feedback struct {
 	NumberPhone string `json:"numberPhone"`
 	Email       string `json:"email"`
 	Question    string `json:"question"`
+	Status      string `json:"status"`
 }

@@ -6,6 +6,7 @@ type Order struct {
 	gorm.Model
 	ClientID           uint      `json:"clientId"`
 	CargoTypeID        uint      `json:"cargoTypeId"`
+	Recipient          string    `json:"recipient"`
 	Status             string    `json:"status"`
 	OrderDate          string    `json:"orderDate"`
 	DestinationAddress string    `json:"destinationAddress"`
