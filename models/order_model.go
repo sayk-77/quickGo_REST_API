@@ -16,3 +16,14 @@ type Order struct {
 	Client             Client    `gorm:"foreignKey:ClientID"`
 	CargoType          CargoType `gorm:"foreignKey:CargoTypeID"`
 }
+
+type OrderConfirm struct {
+	gorm.Model
+	DeliveryDate string `json:"deliveryDate"`
+	SendDate     string `json:"sendDate"`
+	ArriveDate   string `json:"arriveDate"`
+	DriverId     int    `json:"driverId"`
+	CarId        int    `json:"carId"`
+	ExpiryDate   string `json:"expiryDate"`
+	ClientID     int    `json:"clientId"`
+}

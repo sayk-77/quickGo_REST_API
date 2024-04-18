@@ -8,7 +8,7 @@ import (
 type TransportationContractRepository interface {
 	GetTransportationContractById(transportationContractID int) (*models.TransportationContract, error)
 	GetAllTransportationContract() ([]*models.TransportationContract, error)
-	CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (*models.TransportationContract, error)
+	CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (uint, error)
 }
 
 type TransportationContractImpl struct {
@@ -49,10 +49,10 @@ func (tcr *TransportationContractImpl) GetAllTransportationContract() ([]*models
 	return recordTransportationContract, nil
 }
 
-func (tcr *TransportationContractImpl) CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (*models.TransportationContract, error) {
+func (tcr *TransportationContractImpl) CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (uint, error) {
 	if err := tcr.db.Create(&newTransportationContract).Error; err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	return tcr.GetTransportationContractById(int(newTransportationContract.ID))
+	return newTransportationContract.ID, nil
 }

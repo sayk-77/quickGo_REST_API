@@ -12,6 +12,7 @@ type OrderRepository interface {
 	CreateNewOrder(newOrder *models.Order) (*models.Order, error)
 	GetOrdersByStatus(clientId int, status string) ([]*models.Order, error)
 	DeleteOrderById(orderId int) error
+	UpdateOrderStatus(orderId int, status string, deliveryDate string) error
 }
 
 type OrderRepositoryImpl struct {
@@ -74,6 +75,22 @@ func (or *OrderRepositoryImpl) DeleteOrderById(orderId int) error {
 
 	if result.RowsAffected == 0 {
 		return errors.New("Запись не найдена")
+	}
+
+	return nil
+}
+
+func (or *OrderRepositoryImpl) UpdateOrderStatus(orderId int, status string, deliveryDate string) error {
+	order, err := or.GetOrderById(orderId)
+	if err != nil {
+		return err
+	}
+
+	order.Status = status
+	order.DeliveryDate = deliveryDate
+
+	if err := or.db.Save(&order).Error; err != nil {
+		return err
 	}
 
 	return nil

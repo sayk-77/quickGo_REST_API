@@ -23,10 +23,6 @@ func SettingDepInjection(app *fiber.App, db *gorm.DB, redis *redis.Client) {
 	driverService := servise.NewDriverService(driverRepository)
 	controllers.NewDriverController(app, driverService)
 
-	orderRepository := database.NewOrderRepository(db)
-	orderService := servise.NewOrderService(orderRepository)
-	controllers.NewOrderController(app, orderService)
-
 	cargoTypeRepository := database.NewCargoTypeRepository(db)
 	cargoTypeService := servise.NewCargoTypeService(cargoTypeRepository)
 	controllers.NewCargoTypeController(app, cargoTypeService)
@@ -38,6 +34,10 @@ func SettingDepInjection(app *fiber.App, db *gorm.DB, redis *redis.Client) {
 	waybillRepository := database.NewWaybillRepository(db)
 	waybillService := service.NewWaybillService(waybillRepository)
 	controllers.NewWaybillController(app, waybillService)
+
+	orderRepository := database.NewOrderRepository(db)
+	orderService := servise.NewOrderService(orderRepository, driverRepository, transportationContractRepository, waybillRepository)
+	controllers.NewOrderController(app, orderService)
 
 	feedbackRepository := database.NewFeedbackRepository(db)
 	feedbackService := service.NewFeedbackService(feedbackRepository)

@@ -23,6 +23,6 @@ func (tcs *TransportationContractService) GetAllTransportationContract() ([]*mod
 	return tcs.transportationContractRepository.GetAllTransportationContract()
 }
 
-func (tcs *TransportationContractService) CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (*models.TransportationContract, error) {
+func (tcs *TransportationContractService) CreateNewTransportationContract(newTransportationContract *models.TransportationContract) (uint, error) {
 	return tcs.transportationContractRepository.CreateNewTransportationContract(newTransportationContract)
 }

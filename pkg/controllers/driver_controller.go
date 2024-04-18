@@ -18,6 +18,7 @@ func NewDriverController(app *fiber.App, driverService *service.DriverService) *
 	}
 
 	app.Get("/driver/all", driverController.GetAllDriver)
+	app.Get("/driver/free", driverController.GetFreeDriver)
 	app.Get("/driver/:id", driverController.GetDriverById)
 	app.Post("/driver/add", driverController.CreateNewDriver)
 
@@ -45,6 +46,24 @@ func (dc *DriverController) GetAllDriver(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(driverRecord)
+}
+
+func (dc *DriverController) GetFreeDriver(c *fiber.Ctx) error {
+	freeDrivers := make([]*models.Driver, 0)
+
+	allDrivers, err := dc.driverService.GetAllDriver()
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	for _, driver := range allDrivers {
+		if driver.Status == "Свободен" {
+			freeDrivers = append(freeDrivers, driver)
+		}
+	}
+
+	return c.JSON(freeDrivers)
+
 }
 
 func (dc *DriverController) CreateNewDriver(c *fiber.Ctx) error {

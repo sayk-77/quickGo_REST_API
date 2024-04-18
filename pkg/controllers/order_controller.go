@@ -23,6 +23,7 @@ func NewOrderController(app *fiber.App, orderService *service.OrderService) *Ord
 	app.Get("/order/:id", orderController.GetOrderById)
 	app.Post("/order/status", orderController.GetOrdersByStatus)
 	app.Post("/order/add", orderController.CreateNewOrder)
+	app.Post("/order/confirm", orderController.OrderConfirm)
 	app.Delete("/order/delete/:orderId", orderController.DeleteOrderByID)
 
 	return orderController
@@ -112,4 +113,20 @@ func (oc *OrderController) DeleteOrderByID(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"message": "Запись удалена"})
+}
+
+func (oc *OrderController) OrderConfirm(c *fiber.Ctx) error {
+	var orderResponse models.OrderConfirm
+	if err := c.BodyParser(&orderResponse); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var statusOrder string = "В процессе"
+	var statusDriver string = "Занят"
+
+	if err := oc.orderService.UpdateOrderStatus(orderResponse, statusOrder, statusDriver); err != nil {
+		return err
+	}
+
+	return c.JSON(0)
 }
