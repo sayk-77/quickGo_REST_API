@@ -35,16 +35,16 @@ func SettingDepInjection(app *fiber.App, db *gorm.DB, redis *redis.Client) {
 	waybillService := service.NewWaybillService(waybillRepository)
 	controllers.NewWaybillController(app, waybillService)
 
+	emailService := service.NewEmailService("smtp.gmail.com", "587", "yawaihv2@gmail.com", "bdkp ntae lrro bswq")
+	controllers.NewEmailController(app, emailService)
+
 	orderRepository := database.NewOrderRepository(db)
-	orderService := servise.NewOrderService(orderRepository, driverRepository, transportationContractRepository, waybillRepository)
+	orderService := servise.NewOrderService(orderRepository, driverRepository, transportationContractRepository, waybillRepository, emailService, clientRepository)
 	controllers.NewOrderController(app, orderService)
 
 	feedbackRepository := database.NewFeedbackRepository(db)
 	feedbackService := service.NewFeedbackService(feedbackRepository)
 	controllers.NewFeedbackController(app, feedbackService)
-
-	emailService := service.NewEmailService("smtp.gmail.com", "587", "yawaihv2@gmail.com", "bdkp ntae lrro bswq")
-	controllers.NewEmailController(app, emailService)
 
 	passwordRecoveryService := service.NewPasswordRecoveryService(redis, db)
 	controllers.NewPasswordRecoveryController(app, passwordRecoveryService)

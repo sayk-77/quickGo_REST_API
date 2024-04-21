@@ -89,3 +89,69 @@ func (es *EmailService) SendRecoveryMail(code int, email string) error {
 
 	return nil
 }
+
+func (es *EmailService) formatCreateOrderMessage(order *models.Order, emailAddress string) []byte {
+	htmlTemplate, err := ioutil.ReadFile("./templates/order_create.html")
+	if err != nil {
+		fmt.Printf("Ошибка чтения файла order_create.html: %s\n", err)
+		return nil
+	}
+
+	htmlBody := fmt.Sprintf(string(htmlTemplate), strconv.Itoa(int(order.ID)), order.CargoType.TypeName, order.DestinationAddress, order.Recipient, order.SendingAddress, strconv.Itoa(order.OrderPrice))
+
+	body := []byte("From: QuickGo <" + es.from + ">\r\n" +
+		"To: " + emailAddress + "\r\n" +
+		"Subject: Оповещение о заказе\r\n" +
+		"MIME-Version: 1.0\r\n" +
+		"Content-Type: text/html; charset=utf-8\r\n" +
+		"\r\n" +
+		htmlBody)
+
+	return body
+}
+
+func (es *EmailService) SendOrderCreateMail(order *models.Order, emailAddress string) error {
+	message := es.formatCreateOrderMessage(order, emailAddress)
+
+	auth := smtp.PlainAuth("", es.from, es.password, es.smtpHost)
+
+	err := smtp.SendMail(es.smtpHost+":"+es.smtpPort, auth, es.from, []string{emailAddress}, message)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (es *EmailService) formatConfirmOrderMessage(orderId int, dateSend string, dateDelivery string, driverName string, emailAddress string) []byte {
+	htmlTemplate, err := ioutil.ReadFile("./templates/order_confirm.html")
+	if err != nil {
+		fmt.Printf("Ошибка чтения файла order_confirm.html: %s\n", err)
+		return nil
+	}
+
+	htmlBody := fmt.Sprintf(string(htmlTemplate), strconv.Itoa(orderId), dateDelivery, dateSend, driverName)
+
+	body := []byte("From: QuickGo <" + es.from + ">\r\n" +
+		"To: " + emailAddress + "\r\n" +
+		"Subject: Обновление статуса заказа\r\n" +
+		"MIME-Version: 1.0\r\n" +
+		"Content-Type: text/html; charset=utf-8\r\n" +
+		"\r\n" +
+		htmlBody)
+
+	return body
+}
+
+func (es *EmailService) SendConfirmOrderMail(orderId int, dateSend string, dateDelivery string, driverName string, emailAddress string) error {
+	message := es.formatConfirmOrderMessage(orderId, dateDelivery, dateSend, driverName, emailAddress)
+
+	auth := smtp.PlainAuth("", es.from, es.password, es.smtpHost)
+
+	err := smtp.SendMail(es.smtpHost+":"+es.smtpPort, auth, es.from, []string{emailAddress}, message)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

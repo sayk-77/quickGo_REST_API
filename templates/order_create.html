@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create-Order</title>
+    <style>
+        body {
+            font-size: 24px;
+            color: #000;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+        .card {
+            width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px auto;
+        }
+        .details {
+            margin-top: 10px;
+        }
+        .details-title {
+            text-align: center;
+        }
+        .footer {
+            margin-top: 20px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .author {
+            margin-top: 20px;
+            color: #0bd366;
+            text-align: end;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">Logo</div>
+    <div class="order-number">Ваш заказ под номером <span id="order-number">%s</span> создан</div>
+    <div class="details">
+        <p class="details-title">Детали заказа:</p>
+        <p>Тип груза: %s</p>
+        <p>Адрес назначения: %s</p>
+        <p>ФИО получателя: %s</p>
+        <p>Адрес отправления: %s</p>
+        <p>Стоимость доставки: %s</p>
+    </div>
+        <p class="footer">Вы можете отменить заказ в личном профиле</p>
+        <a class="author">QuickGo</a>
+    </div>
+
+</body>
+</html>

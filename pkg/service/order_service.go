@@ -11,14 +11,18 @@ type OrderService struct {
 	driverRepository   database.DriverRepository
 	contractRepository database.TransportationContractRepository
 	waybillRepository  database.WaybillRepository
+	emailService       *EmailService
+	clientRepository   database.ClientRepository
 }
 
-func NewOrderService(orderRepository database.OrderRepository, driverRepository database.DriverRepository, contractRepository database.TransportationContractRepository, waybillRepository database.WaybillRepository) *OrderService {
+func NewOrderService(orderRepository database.OrderRepository, driverRepository database.DriverRepository, contractRepository database.TransportationContractRepository, waybillRepository database.WaybillRepository, emailService *EmailService, clientRepository database.ClientRepository) *OrderService {
 	return &OrderService{
 		orderRepository:    orderRepository,
 		driverRepository:   driverRepository,
 		contractRepository: contractRepository,
 		waybillRepository:  waybillRepository,
+		emailService:       emailService,
+		clientRepository:   clientRepository,
 	}
 }
 
@@ -31,7 +35,22 @@ func (os *OrderService) GetAllOrder() ([]*models.Order, error) {
 }
 
 func (os *OrderService) CreateNewOrder(newOrder *models.Order) (*models.Order, error) {
-	return os.orderRepository.CreateNewOrder(newOrder)
+	client, err := os.clientRepository.GetClientById(int(newOrder.ClientID))
+	if err != nil {
+		return nil, err
+	}
+
+	order, err := os.orderRepository.CreateNewOrder(newOrder)
+	if err != nil {
+		return nil, err
+	}
+
+	err = os.emailService.SendOrderCreateMail(order, client.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
 
 func (os *OrderService) GetOrdersByStatus(clientId int, status string) ([]*models.Order, error) {
@@ -56,9 +75,16 @@ func (os *OrderService) UpdateOrderStatus(order models.OrderConfirm, statusOrder
 	contract.ClientID = uint(order.ClientID)
 	contract.ContractDate = time.Now().Format("2006-01-02")
 	contract.CarID = uint(order.CarId)
-	contract.ExpiryDate = time.Now().Format("2006-01-02")
+	contract.ExpiryDate = order.DeliveryDate
 
 	contractId, err := os.contractRepository.CreateNewTransportationContract(&contract)
+	if err != nil {
+		return err
+	}
+
+	var newContract *models.TransportationContract
+
+	newContract, err = os.contractRepository.GetTransportationContractById(int(contractId))
 	if err != nil {
 		return err
 	}
@@ -70,8 +96,14 @@ func (os *OrderService) UpdateOrderStatus(order models.OrderConfirm, statusOrder
 	waybill.ReturnDate = order.ArriveDate
 	waybill.ContractID = contractId
 
-	_, err = os.waybillRepository.CreateNewWaybill(&waybill)
+	waybillCreate, err := os.waybillRepository.CreateNewWaybill(&waybill)
 	if err != nil {
+		return err
+	}
+
+	var driverName string = waybillCreate.Driver.FirstName + " " + waybillCreate.Driver.LastName
+
+	if err := os.emailService.SendConfirmOrderMail(int(order.ID), order.SendDate, order.DeliveryDate, driverName, newContract.Client.Email); err != nil {
 		return err
 	}
 

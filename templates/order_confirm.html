@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Обновление статуса заказа</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            font-weight: 400;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+        .container {
+            width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px auto;;
+        }
+        .status {
+            text-align: center;
+            color: #333;
+        }
+        .info {
+            margin-top: 20px;
+        }
+        .logo {
+            text-align: center;
+        }
+        .author {
+            color: #0bd366;
+            text-align: end;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">Logo</div>
+    <p class="status">Обновление статуса заказа номер %s</p>
+    <div class="info">
+        <p>Статус заказа: Доставляется</p>
+        <p>Дата доставки: %s</p>
+        <p>Дата отправки: %s</p>
+        <p>Водитель: %s</p>
+    </div>
+    <p class="author">QuickGo</p>
+</div>
+</body>
+</html>
