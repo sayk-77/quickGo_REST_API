@@ -24,3 +24,7 @@ func (cs *CarService) CreateNewCar(newCar *models.Car) (*models.Car, error) {
 func (cs *CarService) GetAllCar() ([]*models.Car, error) {
 	return cs.carRepository.GetAllCar()
 }
+
+func (cs *CarService) FindFreeCar() ([]*models.Car, error) {
+	return cs.carRepository.FindFreeCars()
+}

@@ -9,6 +9,7 @@ type CarRepository interface {
 	GetCarById(carID int) (*models.Car, error)
 	CreateNewCar(newCar *models.Car) (*models.Car, error)
 	GetAllCar() ([]*models.Car, error)
+	FindFreeCars() ([]*models.Car, error)
 }
 
 type CarRepositoryImpl struct {
@@ -44,4 +45,14 @@ func (cr *CarRepositoryImpl) GetAllCar() ([]*models.Car, error) {
 		return nil, err
 	}
 	return carRecord, nil
+}
+
+func (cr *CarRepositoryImpl) FindFreeCars() ([]*models.Car, error) {
+	var cars []*models.Car
+	if err := cr.db.
+		Not("id IN (?)", cr.db.Table("drivers").Select("car_id").Distinct()).
+		Find(&cars).Error; err != nil {
+		return nil, err
+	}
+	return cars, nil
 }

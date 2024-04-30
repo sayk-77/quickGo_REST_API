@@ -24,6 +24,7 @@ func NewOrderController(app *fiber.App, orderService *service.OrderService) *Ord
 	app.Post("/order/status", orderController.GetOrdersByStatus)
 	app.Post("/order/add", orderController.CreateNewOrder)
 	app.Post("/order/confirm", orderController.OrderConfirm)
+	app.Post("/order/price", orderController.CalcPrice)
 	app.Delete("/order/delete/:orderId", orderController.DeleteOrderByID)
 
 	return orderController
@@ -129,4 +130,28 @@ func (oc *OrderController) OrderConfirm(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(0)
+}
+
+func (oc *OrderController) CalcPrice(c *fiber.Ctx) error {
+	type AddressesRequest struct {
+		Address1 string `json:"address1"`
+		Address2 string `json:"address2"`
+	}
+
+	var request AddressesRequest
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	addresses := []string{request.Address1, request.Address2}
+
+	distance, err := tools.GeocodeByAddresses(addresses)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"distance": distance,
+	})
 }

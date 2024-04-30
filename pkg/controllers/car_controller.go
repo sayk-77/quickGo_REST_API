@@ -18,6 +18,7 @@ func NewCarController(app *fiber.App, carService *servise.CarService) *CarContro
 	}
 
 	app.Get("/car/all", carController.GetAllCar)
+	app.Get("/car/free", carController.FindFreeCar)
 	app.Get("/car/:id", carController.GetCarById)
 	app.Post("/car/add", carController.CreateNewCar)
 
@@ -58,5 +59,13 @@ func (cc *CarController) GetAllCar(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	return c.JSON(carRecord)
+}
+
+func (cc *CarController) FindFreeCar(c *fiber.Ctx) error {
+	carRecord, err := cc.carService.FindFreeCar()
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
 	return c.JSON(carRecord)
 }
