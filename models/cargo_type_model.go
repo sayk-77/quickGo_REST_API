@@ -6,5 +6,5 @@ type CargoType struct {
 	gorm.Model
 	TypeName    string  `json:"typeName"`
 	Description string  `json:"descriptionType"`
-	PriceCoeff  float64 `json:"PriceCoeff"`
+	PriceCoeff  float64 `json:"priceCoeff"`
 }

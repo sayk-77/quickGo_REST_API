@@ -155,3 +155,38 @@ func (es *EmailService) SendConfirmOrderMail(orderId int, dateSend string, dateD
 
 	return nil
 }
+
+func (es *EmailService) formatCompleteOrderMessage(orderID int, name, email string) ([]byte, error) {
+	htmlTemplate, err := ioutil.ReadFile("./templates/complete_order.html")
+	if err != nil {
+		return nil, err
+	}
+
+	htmlBody := fmt.Sprintf(string(htmlTemplate), name, strconv.Itoa(orderID))
+
+	body := []byte("From: QuickGo <" + es.from + ">\r\n" +
+		"To: " + email + "\r\n" +
+		"Subject: Заказ завершен\r\n" +
+		"MIME-Version: 1.0\r\n" +
+		"Content-Type: text/html; charset=utf-8\r\n" +
+		"\r\n" +
+		htmlBody)
+
+	return body, nil
+}
+
+func (es *EmailService) SendCompleteOrderMail(orderID int, name, email string) error {
+	message, err := es.formatCompleteOrderMessage(orderID, name, email)
+	if err != nil {
+		return err
+	}
+
+	auth := smtp.PlainAuth("", es.from, es.password, es.smtpHost)
+
+	err = smtp.SendMail(es.smtpHost+":"+es.smtpPort, auth, es.from, []string{email}, message)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

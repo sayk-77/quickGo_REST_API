@@ -10,6 +10,6 @@ type Driver struct {
 	TransportationCert     string `json:"transportationCert"`
 	TransportationCertDate string `json:"transportationCertDate"`
 	Status                 string `json:"status"`
-	CarID                  uint   `json:"carId"`
+	CarID                  int    `json:"carId"`
 	Car                    Car    `gorm:"foreignKey:CarID"`
 }

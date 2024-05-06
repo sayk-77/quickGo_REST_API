@@ -48,4 +48,11 @@ func SettingDepInjection(app *fiber.App, db *gorm.DB, redis *redis.Client) {
 
 	passwordRecoveryService := service.NewPasswordRecoveryService(redis, db)
 	controllers.NewPasswordRecoveryController(app, passwordRecoveryService)
+
+	employeeRepository := database.NewEmployeeRepository(db)
+	employeeService := service.NewEmployeeService(employeeRepository)
+	controllers.NewEmployeeController(app, employeeService)
+
+	fileService := service.NewFileService()
+	controllers.NewFileController(app, fileService)
 }

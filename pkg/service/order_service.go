@@ -109,3 +109,24 @@ func (os *OrderService) UpdateOrderStatus(order models.OrderConfirm, statusOrder
 
 	return nil
 }
+
+func (os *OrderService) CompleteOrder(orderId int) error {
+	var order *models.Order
+	order, err := os.orderRepository.GetOrderById(orderId)
+	if err != nil {
+		return err
+	}
+	var client *models.Client
+	client, err = os.clientRepository.GetClientById(int(order.ClientID))
+	if err != nil {
+		return err
+	}
+	var clientName string = client.FirstName + " " + client.LastName
+	if err := os.emailService.SendCompleteOrderMail(orderId, clientName, client.Email); err != nil {
+		return err
+	}
+	if err := os.orderRepository.CompleteOrder(orderId); err != nil {
+		return err
+	}
+	return nil
+}

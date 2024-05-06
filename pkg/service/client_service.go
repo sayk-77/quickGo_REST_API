@@ -19,8 +19,24 @@ func (cs *ClientService) GetClientById(clientID int) (*models.Client, error) {
 	return cs.clientRepository.GetClientById(clientID)
 }
 
-func (cs *ClientService) GetAllClient() ([]*models.Client, error) {
-	return cs.clientRepository.GetAllClient()
+func (cs *ClientService) GetAllClient() ([]*models.ClientResponse, error) {
+	clientList, err := cs.clientRepository.GetAllClient()
+	if err != nil {
+		return nil, err
+	}
+
+	var clientResponse []*models.ClientResponse
+	for _, client := range clientList {
+		clientResponse = append(clientResponse, &models.ClientResponse{
+			ID:          client.ID,
+			FirstName:   client.FirstName,
+			LastName:    client.LastName,
+			Email:       client.Email,
+			PhoneNumber: client.PhoneNumber,
+			Address:     client.Address,
+		})
+	}
+	return clientResponse, nil
 }
 
 func (cs *ClientService) CreateNewClient(newClient *models.Client) (*models.Client, error) {
