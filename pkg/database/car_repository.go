@@ -10,6 +10,8 @@ type CarRepository interface {
 	CreateNewCar(newCar *models.Car) (*models.Car, error)
 	GetAllCar() ([]*models.Car, error)
 	FindFreeCars() ([]*models.Car, error)
+	SaveCar(newCar *models.Car) error
+	DeleteCar(carID int) error
 }
 
 type CarRepositoryImpl struct {
@@ -55,4 +57,18 @@ func (cr *CarRepositoryImpl) FindFreeCars() ([]*models.Car, error) {
 		return nil, err
 	}
 	return cars, nil
+}
+
+func (cr *CarRepositoryImpl) SaveCar(newCar *models.Car) error {
+	if err := cr.db.Save(&newCar).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cr *CarRepositoryImpl) DeleteCar(carID int) error {
+	if err := cr.db.Delete(&models.Car{}, carID).Error; err != nil {
+		return err
+	}
+	return nil
 }

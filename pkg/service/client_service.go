@@ -54,3 +54,7 @@ func (cs *ClientService) ClientUpdateData(updateClientData models.ClientResponse
 func (cs *ClientService) ClientChangePassword(currentPassword string, newPassword string, id int) error {
 	return cs.clientRepository.ClientChangePassword(currentPassword, newPassword, id)
 }
+
+func (cs *ClientService) DeleteClient(id int) error {
+	return cs.clientRepository.DeleteClient(id)
+}

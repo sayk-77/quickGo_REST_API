@@ -10,6 +10,8 @@ type DriverRepository interface {
 	GetAllDriver() ([]*models.Driver, error)
 	CreateNewDriver(newDriver *models.Driver) (*models.Driver, error)
 	UpdateStatusDriver(driverID int, status string) error
+	UpdateDriver(driver *models.Driver) error
+	DeleteDriverById(driverID int) error
 }
 
 type DriverRepositoryImpl struct {
@@ -61,6 +63,22 @@ func (dr *DriverRepositoryImpl) UpdateStatusDriver(driverID int, status string) 
 	driver.Status = status
 
 	if err := dr.db.Save(&driver).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dr *DriverRepositoryImpl) UpdateDriver(driver *models.Driver) error {
+	if err := dr.db.Save(&driver).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dr *DriverRepositoryImpl) DeleteDriverById(driverID int) error {
+	if err := dr.db.Delete(&models.Driver{}, driverID).Error; err != nil {
 		return err
 	}
 

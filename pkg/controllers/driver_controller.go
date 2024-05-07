@@ -19,8 +19,10 @@ func NewDriverController(app *fiber.App, driverService *service.DriverService) *
 
 	app.Get("/driver/all", driverController.GetAllDriver)
 	app.Get("/driver/free", driverController.GetFreeDriver)
+	app.Get("/driver/delete/:id", driverController.DeleteDriver)
 	app.Get("/driver/:id", driverController.GetDriverById)
 	app.Post("/driver/add", driverController.CreateNewDriver)
+	app.Post("/driver/edit", driverController.EditDriver)
 
 	return driverController
 }
@@ -78,4 +80,28 @@ func (dc *DriverController) CreateNewDriver(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(createdDriver)
+}
+
+func (dc *DriverController) EditDriver(c *fiber.Ctx) error {
+	var editedDriver models.Driver
+	if err := c.BodyParser(&editedDriver); err != nil {
+		c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := dc.driverService.EditDriver(&editedDriver); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON("ok")
+}
+
+func (dc *DriverController) DeleteDriver(c *fiber.Ctx) error {
+	driverID, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := dc.driverService.DeleteDriver(driverID); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON("ok")
 }

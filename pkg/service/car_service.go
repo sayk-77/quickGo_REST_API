@@ -28,3 +28,27 @@ func (cs *CarService) GetAllCar() ([]*models.Car, error) {
 func (cs *CarService) FindFreeCar() ([]*models.Car, error) {
 	return cs.carRepository.FindFreeCars()
 }
+
+func (cs *CarService) UpdateCar(newCar *models.Car) error {
+	car, err := cs.carRepository.GetCarById(int(newCar.ID))
+	if err != nil {
+		return err
+	}
+
+	car.Brand = newCar.Brand
+	car.CarModel = newCar.CarModel
+	car.Year = newCar.Year
+	car.Color = newCar.Color
+	car.Mileage = newCar.Mileage
+	car.TechnicalStatus = newCar.TechnicalStatus
+	car.ImageUrl = newCar.ImageUrl
+
+	if err := cs.carRepository.SaveCar(car); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (cs *CarService) DeleteCar(carID int) error {
+	return cs.carRepository.DeleteCar(carID)
+}

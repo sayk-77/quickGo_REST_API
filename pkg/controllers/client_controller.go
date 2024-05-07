@@ -6,6 +6,7 @@ import (
 	"example.com/go/tools"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 )
 
 type ClientController struct {
@@ -19,6 +20,7 @@ func NewClientContorller(app *fiber.App, clientService *service.ClientService) *
 
 	app.Get("/client/all", clientController.GetAllClient)
 	app.Get("/client/info", clientController.GetClientById)
+	app.Get("/client/delete/:id", clientController.DeleteClient)
 	app.Post("/client/add", clientController.CreateNewClient)
 	app.Post("/client/login", clientController.ClientLogin)
 	app.Post("/client/update", clientController.ClientUpdateData)
@@ -126,5 +128,16 @@ func (cc *ClientController) ClientChangePassword(c *fiber.Ctx) error {
 		return err
 	}
 
+	return nil
+}
+
+func (cc *ClientController) DeleteClient(c *fiber.Ctx) error {
+	clientId, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return err
+	}
+	if err := cc.clientService.DeleteClient(clientId); err != nil {
+		return err
+	}
 	return nil
 }
