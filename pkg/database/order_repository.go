@@ -126,13 +126,5 @@ func (or *OrderRepositoryImpl) CompleteOrder(orderId int) error {
 		return err
 	}
 
-	if err := or.db.Delete(&contract).Error; err != nil {
-		return err
-	}
-
-	if err := or.db.Delete(&waybill).Error; err != nil {
-		return err
-	}
-
 	return nil
 }

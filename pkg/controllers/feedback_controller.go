@@ -51,6 +51,8 @@ func (fc *FeedbackController) CreateNew(c *fiber.Ctx) error {
 		c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	feedback.Status = "Новый"
+
 	if err := fc.feedbackService.CreateNew(feedback); err != nil {
 		c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
