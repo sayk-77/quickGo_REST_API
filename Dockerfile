@@ -1,4 +1,8 @@
-FROM ubuntu:latest
-LABEL authors="yawai"
+FROM golang:latest
+WORKDIR /QuickGo_backend
 
-ENTRYPOINT ["top", "-b"]
+COPY . .
+
+RUN go build -o main .
+
+CMD ["./main"]

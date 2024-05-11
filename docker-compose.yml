@@ -1,0 +1,27 @@
+services:
+  golang-server:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      REDIS_ADDRESS: "redis:6379"
+      REDIS_PASSWORD: "password"
+      POSTGRES_ADDRESS: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "CargoTransportation"
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:latest
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: CargoTransportation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
