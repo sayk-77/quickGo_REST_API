@@ -2,11 +2,8 @@ package database
 
 import (
 	"errors"
-	"fmt"
-	"os"
-
 	"example.com/go/models"
-	"example.com/go/tools"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -15,7 +12,7 @@ type ClientRepository interface {
 	GetClientById(clientID int) (*models.Client, error)
 	GetAllClient() ([]*models.Client, error)
 	CreateNewClient(newClient *models.Client) (*models.Client, error)
-	ClientLogin(email string, password string) (string, error)
+	ClientLogin(email string) (*models.Client, error)
 	ClientUpdateData(updateClientData models.ClientResponse) error
 	ClientChangePassword(currentPassword string, newPassword string, id int) error
 	ClientFindByEmail(email string) error
@@ -71,25 +68,17 @@ func (cr *ClientRepositoryImpl) CreateNewClient(newClient *models.Client) (*mode
 	return newClient, nil
 }
 
-func (cr *ClientRepositoryImpl) ClientLogin(email string, password string) (string, error) {
+func (cr *ClientRepositoryImpl) ClientLogin(email string) (*models.Client, error) {
 	var client models.Client
 
 	if err := cr.db.Where("email = ?", email).First(&client).Error; err != nil {
-		return "", fmt.Errorf("Пользователь не найден")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("Пользователь с такой электронной почтой не найден")
+		}
+		return nil, fmt.Errorf("Ошибка при поиске пользователя: %v", err)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(client.Password), []byte(password)); err != nil {
-		return "", fmt.Errorf("Не верный пароль")
-	}
-
-	accessTokenSecretKey := []byte(os.Getenv("ACCESS_TOKEN_SECRET_KEY"))
-
-	accessToken, err := tools.GenerateToken(client.ID, accessTokenSecretKey)
-	if err != nil {
-		return "", err
-	}
-
-	return accessToken, nil
+	return &client, nil
 }
 
 func (cr *ClientRepositoryImpl) ClientUpdateData(updateClientData models.ClientResponse) error {

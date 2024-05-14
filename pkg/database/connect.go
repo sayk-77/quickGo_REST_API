@@ -6,7 +6,7 @@ import (
 )
 
 func NewDataBaseConnection() (*gorm.DB, error) {
-	dbc := "host=postgres user=postgres password=postgres dbname=CargoTransportation sslmode=disable"
+	dbc := "host=localhost user=postgres password=postgres dbname=CargoTransportation sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dbc), &gorm.Config{})
 

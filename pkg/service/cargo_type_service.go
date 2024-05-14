@@ -26,3 +26,11 @@ func (cts *CargoTypeService) GetAllTypeCargo() ([]*models.CargoType, error) {
 func (cts *CargoTypeService) CreateNewCargoType(newCargoType *models.CargoType) (*models.CargoType, error) {
 	return cts.cargoTypeRepository.CreateNewCargoType(newCargoType)
 }
+
+func (cts *CargoTypeService) UpdateCargoType(cargoType *models.CargoType) error {
+	return cts.cargoTypeRepository.UpdateCargoType(cargoType)
+}
+
+func (cts *CargoTypeService) DeleteCargoType(cargoTypeId int) error {
+	return cts.cargoTypeRepository.DeleteCargoType(cargoTypeId)
+}

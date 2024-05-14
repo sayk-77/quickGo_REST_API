@@ -41,7 +41,7 @@ func main() {
 	database.AutoMigrate(db)
 	dependency.SettingDepInjection(app, db, redis)
 
-	server := app.Listen("0.0.0.0:5000")
+	server := app.Listen("192.168.0.105:5000")
 	if server != nil {
 		panic(server)
 	}

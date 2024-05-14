@@ -9,6 +9,8 @@ type CargoTypeRepository interface {
 	GetCargoTypeById(cargoTypeID int) (*models.CargoType, error)
 	GetAllCargoType() ([]*models.CargoType, error)
 	CreateNewCargoType(newCargoType *models.CargoType) (*models.CargoType, error)
+	UpdateCargoType(updatedCargoType *models.CargoType) error
+	DeleteCargoType(cargoTypeID int) error
 }
 
 type CargoTypeRepositoryImpl struct {
@@ -45,4 +47,19 @@ func (cr *CargoTypeRepositoryImpl) CreateNewCargoType(newCargoType *models.Cargo
 	}
 
 	return newCargoType, nil
+}
+
+func (cr *CargoTypeRepositoryImpl) UpdateCargoType(updatedCargoType *models.CargoType) error {
+	if err := cr.db.Save(updatedCargoType).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cr *CargoTypeRepositoryImpl) DeleteCargoType(cargoTypeID int) error {
+	if err := cr.db.Delete(&models.CargoType{}, cargoTypeID).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"example.com/go/models"
 	"example.com/go/pkg/database"
+	"fmt"
 	"time"
 )
 
@@ -27,7 +28,14 @@ func NewOrderService(orderRepository database.OrderRepository, driverRepository 
 }
 
 func (os *OrderService) GetOrderById(orderID int) (*models.Order, error) {
-	return os.orderRepository.GetOrderById(orderID)
+	order, err := os.orderRepository.GetOrderById(orderID)
+	if err != nil {
+		return nil, err
+	}
+	if order.Status == "Завершен" {
+		return nil, fmt.Errorf("Данный заказ уже завершен")
+	}
+	return order, nil
 }
 
 func (os *OrderService) GetAllOrder() ([]*models.Order, error) {

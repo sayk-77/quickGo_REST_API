@@ -18,6 +18,8 @@ func NewCargoTypeController(app *fiber.App, cargoTypeService *service.CargoTypeS
 	}
 
 	app.Get("/cargo_type/all", cargoTypeController.GetAllCargoType)
+	app.Post("/cargo_type/update", cargoTypeController.UpdateCargoType)
+	app.Get("/cargo_type/delete/:id", cargoTypeController.DeleteCargoType)
 	app.Get("/cargo_type/:id", cargoTypeController.GetCargoTypeById)
 	app.Post("/cargo_type/add", cargoTypeController.CreateNewCargoType)
 
@@ -59,4 +61,26 @@ func (ctx *CargoTypeController) CreateNewCargoType(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(createdCargoType)
+}
+
+func (ctx *CargoTypeController) UpdateCargoType(c *fiber.Ctx) error {
+	var updatedTypeCargo models.CargoType
+	if err := c.BodyParser(&updatedTypeCargo); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := ctx.cargoTypeService.UpdateCargoType(&updatedTypeCargo); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON("ok")
+}
+
+func (ctx *CargoTypeController) DeleteCargoType(c *fiber.Ctx) error {
+	cargoTypeID, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := ctx.cargoTypeService.DeleteCargoType(cargoTypeID); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON("ok")
 }
